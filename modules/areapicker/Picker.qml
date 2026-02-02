@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import qs.components
 import qs.services
 import qs.config
+import qs.utils
 import Caelestia
 import Quickshell
 import Quickshell.Wayland
@@ -72,9 +73,12 @@ MouseArea {
     }
 
     function save(): void {
-        const tmpfile = Qt.resolvedUrl(`/tmp/caelestia-picker-${Quickshell.processId}-${Date.now()}.png`);
-        CUtils.saveItem(screencopy, tmpfile, Qt.rect(Math.ceil(rsx), Math.ceil(rsy), Math.floor(sw), Math.floor(sh)), path => Quickshell.execDetached(["swappy", "-f", path]));
+        const screenshot_dir = `${Paths.cache}/screenshots/caelestia-screenshot-picker-${Time.format("yyyymmddhhmmss")}.png`;
+        const screenshot_dir_url = Qt.resolvedUrl(screenshot_dir);
+        CUtils.saveItem(screencopy, screenshot_dir_url, Qt.rect(Math.ceil(rsx), Math.ceil(rsy), Math.floor(sw), Math.floor(sh)), path => Quickshell.execDetached(["swappy", "-f", path]))
+        Quickshell.execDetached(["sh", "-c", `wl-copy < ${screenshot_dir}`]);
         closeAnim.start();
+        Quickshell.execDetached(["notify-send", "Screenshot Saved", `Screenshot stored in ${screenshot_dir}`]);
     }
 
     onClientsChanged: checkClientRects(mouseX, mouseY)
