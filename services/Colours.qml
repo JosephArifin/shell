@@ -78,11 +78,30 @@ Singleton {
         Quickshell.execDetached(["caelestia", "scheme", "set", "--notify", "-m", mode]);
     }
 
+    function generateZenScheme(data: string): void {
+        const scheme = JSON.parse(data);
+        const chromeDir = `${Paths.home}/.zen/hu62x90a.Default (release)/chrome/`;
+
+        let css = ":root {\n";
+        css += `  --c-accent: #${scheme.colours.primary};\n`;
+        css += `  --c-text: #${scheme.colours.text};\n`;
+        css += `  --c-mantle: #${scheme.colours.mantle};\n`;
+        css += `  --c-base: #${scheme.colours.base};\n`;
+        css += `  --c-surface0: #${scheme.colours.surfaceContainer};\n`;
+        css += `  --c-surface1: #${scheme.colours.surfaceVariant};\n`;
+        css += "}";
+
+        Quickshell.execDetached(["sh", "-c", `echo '${css}' > "${chromeDir}/caelestia-colors.css"`]);
+    }
+
     FileView {
         path: `${Paths.state}/scheme.json`
         watchChanges: true
         onFileChanged: reload()
-        onLoaded: root.load(text(), false)
+        onLoaded: {
+            root.load(text(), false);
+            generateZenScheme(text());
+        }
     }
 
     ImageAnalyser {
