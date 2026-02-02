@@ -23,7 +23,7 @@ Item {
 
     clip: true
     implicitWidth: Math.max(icon.implicitWidth, current.implicitHeight)
-    implicitHeight: icon.implicitHeight + current.implicitWidth + (current.anchors.bottomMargin * 2)
+    implicitHeight: icon.implicitHeight + current.implicitWidth + current.anchors.topMargin
 
     MaterialIcon {
         id: icon
@@ -71,8 +71,8 @@ Item {
         id: text
 
         anchors.horizontalCenter: icon.horizontalCenter
-        anchors.bottom: icon.bottom
-        anchors.bottomMargin: Appearance.spacing.small
+        anchors.top: icon.bottom
+        anchors.topMargin: Appearance.spacing.small
 
         font.pointSize: metrics.font.pointSize
         font.family: metrics.font.family
@@ -91,7 +91,7 @@ Item {
         ]
 
         width: implicitHeight
-        height: -implicitWidth
+        height: implicitWidth
 
         Behavior on opacity {
             Anim {}
