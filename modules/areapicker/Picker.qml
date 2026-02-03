@@ -73,10 +73,9 @@ MouseArea {
     }
 
     function save(): void {
-        // const screenshot_dir = `${Paths.cache}/screenshots/caelestia-screenshot-picker-${Time.format("yyyymmddhhmmss")}.png`;
-        // const screenshot_dir_url = Qt.resolvedUrl(screenshot_dir);
-        const tmpfile = Qt.resolvedUrl(`/tmp/caelestia-picker-${Quickshell.processId}-${Date.now()}.png`);
-        CUtils.saveItem(screencopy, tmpfile, Qt.rect(Math.ceil(rsx), Math.ceil(rsy), Math.floor(sw), Math.floor(sh)), path => {
+        const screenshot_dir = `${Paths.cache}/screenshots/caelestia-screenshot-picker-${Time.format("yyyymmddhhmmss")}.png`;
+        const screenshot_dir_url = Qt.resolvedUrl(screenshot_dir);
+        CUtils.saveItem(screencopy, screenshot_dir_url, Qt.rect(Math.ceil(rsx), Math.ceil(rsy), Math.floor(sw), Math.floor(sh)), path => {
             if (root.loader.clipboardOnly) {
                 Quickshell.execDetached(["sh", "-c", "wl-copy --type image/png < " + path]);
                 Quickshell.execDetached(["notify-send", "-a", "caelestia-cli", "-i", path, "Screenshot taken", "Screenshot copied to clipboard"]);
@@ -85,7 +84,6 @@ MouseArea {
             }
         });
         closeAnim.start();
-        // Quickshell.execDetached(["notify-send", "Screenshot Saved", `Screenshot stored in ${screenshot_dir}`]);
     }
 
     onClientsChanged: checkClientRects(mouseX, mouseY)
