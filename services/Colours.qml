@@ -80,7 +80,7 @@ Singleton {
 
     function generateZenScheme(data: string): void {
         const scheme = JSON.parse(data);
-        const chromeDir = `${Paths.home}/.zen/hu62x90a.Default (release)/chrome/`;
+        const chromeDir = `${Paths.home}/.zen/mjuzhlhf.Default (release)/chrome`;
 
         let css = ":root {\n";
         css += `  --c-accent: #${scheme.colours.primary};\n`;
