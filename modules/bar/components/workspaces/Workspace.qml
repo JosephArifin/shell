@@ -31,6 +31,8 @@ ColumnLayout {
     StyledText {
         id: indicator
 
+        font.family: Appearance.font.family.mono
+
         Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
         Layout.preferredHeight: Config.bar.sizes.innerWidth - Appearance.padding.small * 2 + 3
 

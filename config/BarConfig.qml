@@ -56,7 +56,7 @@ JsonObject {
     component ScrollActions: JsonObject {
         property bool workspaces: true
         property bool volume: true
-        property bool brightness: true
+        property bool brightness: false
     }
 
     component Popouts: JsonObject {
@@ -72,7 +72,7 @@ JsonObject {
         property bool showWindows: true
         property bool showWindowsOnSpecialWorkspaces: showWindows
         property bool activeTrail: false
-        property bool perMonitorWorkspaces: true
+        property bool perMonitorWorkspaces: false
         property bool useNumberedWorkspaces: false
         property string label: "  " // if empty, will show workspace name's first letter
         property string occupiedLabel: "󰮯"
@@ -82,7 +82,7 @@ JsonObject {
     }
 
     component ActiveWindow: JsonObject {
-        property bool inverted: false
+        property bool inverted: true
     }
 
     component Tray: JsonObject {
