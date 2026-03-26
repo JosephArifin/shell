@@ -32,7 +32,7 @@ ColumnLayout {
         id: indicator
 
         Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-        Layout.preferredHeight: Config.bar.sizes.innerWidth - Appearance.padding.small * 2
+        Layout.preferredHeight: Config.bar.sizes.innerWidth - Appearance.padding.small * 2 + 3
 
         Binding {
             when: root.useNumberedWorkspaces
