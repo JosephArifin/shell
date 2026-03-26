@@ -1,9 +1,14 @@
 pragma ComponentBehavior: Bound
 
+import QtQuick
+import QtQuick.Effects
+import Quickshell
+import Quickshell.Io
+import Quickshell.Wayland
+import Caelestia
 import qs.components
 import qs.services
 import qs.config
-import qs.utils
 import Caelestia
 import Quickshell
 import Quickshell.Wayland
@@ -82,8 +87,8 @@ MouseArea {
             } else {
                 Quickshell.execDetached(["swappy", "-f", path]);
             }
+            closeAnim.start();
         });
-        closeAnim.start();
     }
 
     onClientsChanged: checkClientRects(mouseX, mouseY)
@@ -193,9 +198,21 @@ MouseArea {
         }
     }
 
+    Process {
+        running: true
+        command: ["hyprctl", "cursorpos", "-j"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const pos = JSON.parse(text);
+                root.checkClientRects(pos.x - root.screen.x, pos.y - root.screen.y);
+            }
+        }
+    }
+
     Loader {
         id: screencopy
 
+        asynchronous: true
         anchors.fill: parent
 
         active: root.loader.freeze
