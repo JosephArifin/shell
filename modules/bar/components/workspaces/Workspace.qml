@@ -35,16 +35,6 @@ ColumnLayout {
 
         Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
         Layout.preferredHeight: Config.bar.sizes.innerWidth - Appearance.padding.small * 2
-
-        Binding {
-            when: root.useNumberedWorkspaces
-
-            target: indicator
-            property: "font.family"
-            value: Appearance.font.family.mono
-            restoreMode: Binding.RestoreBindingOrValue
-        }
-
         animate: true
         text: {
             const ws = Hypr.workspaces.values.find(w => w.id === root.ws);
@@ -62,6 +52,15 @@ ColumnLayout {
         }
         color: Config.bar.workspaces.occupiedBg || root.isOccupied || root.activeWsId === root.ws ? Colours.palette.m3onSurface : Colours.layer(Colours.palette.m3outlineVariant, 2)
         verticalAlignment: Qt.AlignVCenter
+
+        Binding {
+            when: root.useNumberedWorkspaces
+
+            target: indicator
+            property: "font.family"
+            value: Appearance.font.family.mono
+            restoreMode: Binding.RestoreBindingOrValue
+        }
     }
 
     Loader {
