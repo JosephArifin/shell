@@ -9,6 +9,7 @@ import Caelestia
 import qs.components
 import qs.services
 import qs.config
+import qs.utils
 import Caelestia
 import Quickshell
 import Quickshell.Wayland
