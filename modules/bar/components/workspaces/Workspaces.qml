@@ -4,17 +4,18 @@ import QtQuick
 import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
+import Caelestia.Config
 import qs.components
 import qs.services
-import qs.config
 
 StyledClippingRect {
     id: root
 
     required property ShellScreen screen
+    required property bool fullscreen
 
-    readonly property bool onSpecial: (Config.bar.workspaces.perMonitorWorkspaces ? Hypr.monitorFor(screen) : Hypr.focusedMonitor)?.lastIpcObject.specialWorkspace?.name !== ""
-    readonly property int activeWsId: Config.bar.workspaces.perMonitorWorkspaces ? (Hypr.monitorFor(screen).activeWorkspace?.id ?? 1) : Hypr.activeWsId
+    readonly property bool onSpecial: (GlobalConfig.bar.workspaces.perMonitorWorkspaces ? Hypr.monitorFor(screen) : Hypr.focusedMonitor)?.lastIpcObject.specialWorkspace?.name !== ""
+    readonly property int activeWsId: GlobalConfig.bar.workspaces.perMonitorWorkspaces ? (Hypr.monitorFor(screen).activeWorkspace?.id ?? 1) : Hypr.activeWsId
 
     readonly property var occupied: {
         const occ = {};
@@ -26,16 +27,17 @@ StyledClippingRect {
 
     property real blur: onSpecial ? 1 : 0
 
-    implicitWidth: Config.bar.sizes.innerWidth
-    implicitHeight: layout.implicitHeight + Appearance.padding.small * 2
+    implicitWidth: Tokens.sizes.bar.innerWidth
+    implicitHeight: layout.implicitHeight + Tokens.padding.small * 2
 
     color: Colours.tPalette.m3surfaceContainer
-    radius: Appearance.rounding.full
+    radius: Tokens.rounding.full
 
     Item {
         anchors.fill: parent
         scale: root.onSpecial ? 0.8 : 1
         opacity: root.onSpecial ? 0.5 : 1
+        visible: !root.fullscreen
 
         layer.enabled: root.blur > 0
         layer.effect: MultiEffect {
@@ -49,7 +51,7 @@ StyledClippingRect {
             active: Config.bar.workspaces.occupiedBg
 
             anchors.fill: parent
-            anchors.margins: Appearance.padding.small
+            anchors.margins: Tokens.padding.small
 
             sourceComponent: OccupiedBg {
                 workspaces: workspaces
@@ -62,7 +64,7 @@ StyledClippingRect {
             id: layout
 
             anchors.centerIn: parent
-            spacing: Math.floor(Appearance.spacing.small / 2)
+            spacing: Math.floor(Tokens.spacing.small / 2)
 
             Repeater {
                 id: workspaces
@@ -86,6 +88,7 @@ StyledClippingRect {
                 activeWsId: root.activeWsId
                 workspaces: workspaces
                 mask: layout
+                fullscreen: root.fullscreen
             }
         }
 
@@ -115,7 +118,7 @@ StyledClippingRect {
         asynchronous: true
 
         anchors.fill: parent
-        anchors.margins: Appearance.padding.small
+        anchors.margins: Tokens.padding.small
 
         active: opacity > 0
 
@@ -137,7 +140,7 @@ StyledClippingRect {
 
     Behavior on blur {
         Anim {
-            duration: Appearance.anim.durations.small
+            type: Anim.StandardSmall
         }
     }
 }

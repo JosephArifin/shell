@@ -2,8 +2,9 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
+import Caelestia.Config
 import qs.components
-import qs.config
+import qs.utils
 import qs.modules.bar.popouts as BarPopouts
 
 Item {
@@ -12,13 +13,15 @@ Item {
     required property ShellScreen screen
     required property DrawerVisibilities visibilities
     required property BarPopouts.Wrapper popouts
-    required property bool disabled
+    required property bool fullscreen
+
+    readonly property bool disabled: Strings.testRegexList(Config.bar.excludedScreens, screen.name)
 
     readonly property int clampedWidth: Math.max(Config.border.minThickness, implicitWidth)
-    readonly property int padding: Math.max(Appearance.padding.smaller, Config.border.thickness)
-    readonly property int contentWidth: Config.bar.sizes.innerWidth + padding * 2
+    readonly property int padding: Math.max(Tokens.padding.smaller, Config.border.thickness)
+    readonly property int contentWidth: Tokens.sizes.bar.innerWidth + padding * 2
     readonly property int exclusiveZone: !disabled && (Config.bar.persistent || visibilities.bar) ? contentWidth : Config.border.thickness
-    readonly property bool shouldBeVisible: !disabled && (Config.bar.persistent || visibilities.bar || isHovered)
+    readonly property bool shouldBeVisible: !fullscreen && !disabled && (Config.bar.persistent || visibilities.bar || isHovered)
     property bool isHovered
 
     function closeTray(): void {
@@ -33,8 +36,9 @@ Item {
         (content.item as Bar)?.handleWheel(y, angleDelta);
     }
 
-    visible: width > Config.border.thickness
-    implicitWidth: Config.border.thickness
+    clip: true
+    visible: width > 0
+    implicitWidth: fullscreen ? 0 : Config.border.thickness
 
     states: State {
         name: "visible"
@@ -53,8 +57,7 @@ Item {
             Anim {
                 target: root
                 property: "implicitWidth"
-                duration: Appearance.anim.durations.expressiveDefaultSpatial
-                easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+                type: Anim.DefaultSpatial
             }
         },
         Transition {
@@ -64,7 +67,7 @@ Item {
             Anim {
                 target: root
                 property: "implicitWidth"
-                easing.bezierCurve: Appearance.anim.curves.emphasized
+                type: Anim.Emphasized
             }
         }
     ]
@@ -83,6 +86,7 @@ Item {
             screen: root.screen
             visibilities: root.visibilities
             popouts: root.popouts // qmllint disable incompatible-type
+            fullscreen: root.fullscreen
         }
     }
 }

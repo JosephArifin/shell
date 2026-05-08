@@ -3,9 +3,9 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import Caelestia.Config
 import qs.components
 import qs.services
-import qs.config
 import qs.utils
 
 ColumnLayout {
@@ -18,12 +18,11 @@ ColumnLayout {
 
     readonly property bool isWorkspace: true // Flag for finding workspace children
     // Unanimated prop for others to use as reference
-    readonly property int size: implicitHeight + (hasWindows ? Appearance.padding.small : 0)
+    readonly property int size: implicitHeight + (hasWindows ? Tokens.padding.small : 0)
 
     readonly property int ws: groupOffset + index + 1
     readonly property bool isOccupied: occupied[ws] ?? false
     readonly property bool hasWindows: isOccupied && Config.bar.workspaces.showWindows
-    readonly property bool useNumberedWorkspaces: Config.bar.workspaces.useNumberedWorkspaces
 
     Layout.alignment: Qt.AlignHCenter
     Layout.preferredHeight: size
@@ -33,19 +32,10 @@ ColumnLayout {
     StyledText {
         id: indicator
 
-        font.family: Appearance.font.family.mono
+        font.family: root.Tokens.font.family.mono
 
         Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-        Layout.preferredHeight: Config.bar.sizes.innerWidth - Appearance.padding.small * 2 + 3
-
-        Binding {
-            when: root.useNumberedWorkspaces
-
-            target: indicator
-            property: "font.family"
-            value: Appearance.font.family.mono
-            restoreMode: Binding.RestoreBindingOrValue
-        }
+        Layout.preferredHeight: Tokens.sizes.bar.innerWidth - Tokens.padding.small * 2 + 3
 
         animate: true
         text: {
@@ -60,7 +50,8 @@ ColumnLayout {
             const label = Config.bar.workspaces.label || displayName;
             const occupiedLabel = Config.bar.workspaces.occupiedLabel || label;
             const activeLabel = Config.bar.workspaces.activeLabel || (root.isOccupied ? occupiedLabel : label);
-            return root.useNumberedWorkspaces ? root.ws % 10 : root.activeWsId === root.ws ? activeLabel : root.isOccupied ? occupiedLabel : label;
+            // return root.useNumberedWorkspaces ? root.ws % 10 : root.activeWsId === root.ws ? activeLabel : root.isOccupied ? occupiedLabel : label;
+            return root.ws % 10;
         }
         color: Config.bar.workspaces.occupiedBg || root.isOccupied || root.activeWsId === root.ws ? Colours.palette.m3onSurface : Colours.layer(Colours.palette.m3outlineVariant, 2)
         verticalAlignment: Qt.AlignVCenter
@@ -73,7 +64,7 @@ ColumnLayout {
 
         Layout.alignment: Qt.AlignHCenter
         Layout.fillHeight: true
-        Layout.topMargin: -Config.bar.sizes.innerWidth / 10
+        Layout.topMargin: -Tokens.sizes.bar.innerWidth / 10
 
         visible: active
         active: root.hasWindows
@@ -86,7 +77,7 @@ ColumnLayout {
                     properties: "scale"
                     from: 0
                     to: 1
-                    easing.bezierCurve: Appearance.anim.curves.standardDecel
+                    easing: Tokens.anim.standardDecel
                 }
             }
 
@@ -94,7 +85,7 @@ ColumnLayout {
                 Anim {
                     properties: "scale"
                     to: 1
-                    easing.bezierCurve: Appearance.anim.curves.standardDecel
+                    easing: Tokens.anim.standardDecel
                 }
                 Anim {
                     properties: "x,y"
@@ -106,7 +97,7 @@ ColumnLayout {
                     values: {
                         const ws = root.ws;
                         const windows = Hypr.toplevels.values.filter(c => c.workspace?.id === ws);
-                        const maxIcons = Config.bar.workspaces.maxWindowIcons;
+                        const maxIcons = root.Config.bar.workspaces.maxWindowIcons;
                         return maxIcons > 0 ? windows.slice(0, maxIcons) : windows;
                     }
                 }

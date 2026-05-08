@@ -2,10 +2,11 @@ pragma Singleton
 
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import Quickshell.Services.Pipewire
 import Caelestia
+import Caelestia.Config
 import Caelestia.Services
-import qs.config
 
 Singleton {
     id: root
@@ -32,31 +33,31 @@ Singleton {
     function setVolume(newVolume: real): void {
         if (sink?.ready && sink?.audio) {
             sink.audio.muted = false;
-            sink.audio.volume = Math.max(0, Math.min(Config.services.maxVolume, newVolume));
+            sink.audio.volume = Math.max(0, Math.min(GlobalConfig.services.maxVolume, newVolume));
         }
     }
 
     function incrementVolume(amount: real): void {
-        setVolume(volume + (amount || Config.services.audioIncrement));
+        setVolume(volume + (amount || GlobalConfig.services.audioIncrement));
     }
 
     function decrementVolume(amount: real): void {
-        setVolume(volume - (amount || Config.services.audioIncrement));
+        setVolume(volume - (amount || GlobalConfig.services.audioIncrement));
     }
 
     function setSourceVolume(newVolume: real): void {
         if (source?.ready && source?.audio) {
             source.audio.muted = false;
-            source.audio.volume = Math.max(0, Math.min(Config.services.maxVolume, newVolume));
+            source.audio.volume = Math.max(0, Math.min(GlobalConfig.services.maxVolume, newVolume));
         }
     }
 
     function incrementSourceVolume(amount: real): void {
-        setSourceVolume(sourceVolume + (amount || Config.services.audioIncrement));
+        setSourceVolume(sourceVolume + (amount || GlobalConfig.services.audioIncrement));
     }
 
     function decrementSourceVolume(amount: real): void {
-        setSourceVolume(sourceVolume - (amount || Config.services.audioIncrement));
+        setSourceVolume(sourceVolume - (amount || GlobalConfig.services.audioIncrement));
     }
 
     function setAudioSink(newSink: PwNode): void {
@@ -67,10 +68,19 @@ Singleton {
         Pipewire.preferredDefaultAudioSource = newSource;
     }
 
+    function cycleNextAudioOutput(): void {
+        if (sinks.length === 0)
+            return;
+
+        const currentIndex = sinks.findIndex(s => s === sink);
+        const nextIndex = (currentIndex + 1) % sinks.length;
+        setAudioSink(sinks[nextIndex]);
+    }
+
     function setStreamVolume(stream: PwNode, newVolume: real): void {
         if (stream?.ready && stream?.audio) {
             stream.audio.muted = false;
-            stream.audio.volume = Math.max(0, Math.min(Config.services.maxVolume, newVolume));
+            stream.audio.volume = Math.max(0, Math.min(GlobalConfig.services.maxVolume, newVolume));
         }
     }
 
@@ -101,7 +111,7 @@ Singleton {
 
         const newSinkName = sink.description || sink.name || qsTr("Unknown Device");
 
-        if (previousSinkName && previousSinkName !== newSinkName && Config.utilities.toasts.audioOutputChanged)
+        if (previousSinkName && previousSinkName !== newSinkName && GlobalConfig.utilities.toasts.audioOutputChanged)
             Toaster.toast(qsTr("Audio output changed"), qsTr("Now using: %1").arg(newSinkName), "volume_up");
 
         previousSinkName = newSinkName;
@@ -113,7 +123,7 @@ Singleton {
 
         const newSourceName = source.description || source.name || qsTr("Unknown Device");
 
-        if (previousSourceName && previousSourceName !== newSourceName && Config.utilities.toasts.audioInputChanged)
+        if (previousSourceName && previousSourceName !== newSourceName && GlobalConfig.utilities.toasts.audioInputChanged)
             Toaster.toast(qsTr("Audio input changed"), qsTr("Now using: %1").arg(newSourceName), "mic");
 
         previousSourceName = newSourceName;
@@ -156,10 +166,18 @@ Singleton {
     CavaProvider {
         id: cava
 
-        bars: Config.services.visualiserBars
+        bars: GlobalConfig.services.visualiserBars
     }
 
     BeatTracker {
         id: beatTracker
+    }
+
+    IpcHandler {
+        function cycleOutput(): void {
+            root.cycleNextAudioOutput();
+        }
+
+        target: "audio"
     }
 }
