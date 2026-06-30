@@ -8,12 +8,6 @@ import Caelestia
 import qs.components
 import qs.components.effects
 import qs.services
-import qs.utils
-import Caelestia
-import Quickshell
-import Quickshell.Wayland
-import QtQuick
-import QtQuick.Effects
 
 MouseArea {
     id: root

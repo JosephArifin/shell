@@ -48,8 +48,8 @@ ColumnLayout {
             const label = Config.bar.workspaces.label || displayName;
             const occupiedLabel = Config.bar.workspaces.occupiedLabel || label;
             const activeLabel = Config.bar.workspaces.activeLabel || (root.isOccupied ? occupiedLabel : label);
-            // return root.useNumberedWorkspaces ? root.ws % 10 : root.activeWsId === root.ws ? activeLabel : root.isOccupied ? occupiedLabel : label;
-            return root.ws % 10;
+            return root.activeWsId === root.ws ? activeLabel : root.isOccupied ? occupiedLabel : label;
+            // return root.ws % 10;
         }
         color: Config.bar.workspaces.occupiedBg || root.isOccupied || root.activeWsId === root.ws ? Colours.palette.m3onSurface : Colours.layer(Colours.palette.m3outlineVariant, 2)
         verticalAlignment: Qt.AlignVCenter
